@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "73712879979",
+    "project_id": "unisphere-58b8b",
+    "storage_bucket": "unisphere-58b8b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73712879979:android:9f85025626aedefe7ee42e",
+        "android_client_info": {
+          "package_name": "com.example.unione"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "73712879979-1dk5ab8i121ces07ksfvp5no5l04dhud.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.unione",
+            "certificate_hash": "a9c5508f225cd21457d98d96674b8152f7ecfc24"
+          }
+        },
+        {
+          "client_id": "73712879979-ufd6kcj1u5alm666k4n61pgugs5oagai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6Lm2SRoAJf3m_6w9Q9cyZAwRfUtJq-tQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73712879979-tdlt8bhk3u6h08lr20aovrlh0aj8915k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "73712879979-h8vuvmucbfbccfvj94trrcq5o4fc7q6s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.unione"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
