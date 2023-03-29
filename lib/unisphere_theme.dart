@@ -13,11 +13,11 @@ class UnisphereTheme {
         color: Colors.grey.shade600,
         letterSpacing: 0),
     bodyLarge: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
+        fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
     bodyMedium: GoogleFonts.openSans(
-        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black),
+        fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black),
     bodySmall: GoogleFonts.openSans(
-        fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black),
+        fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
     displayLarge: GoogleFonts.openSans(
         fontSize: 32, fontWeight: FontWeight.w900, color: Colors.grey.shade700),
     displayMedium: GoogleFonts.openSans(
@@ -39,11 +39,11 @@ class UnisphereTheme {
         color: Colors.grey.shade400,
         letterSpacing: 0),
     bodyLarge: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white),
+        fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
     bodyMedium: GoogleFonts.openSans(
-        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white),
+        fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
     bodySmall: GoogleFonts.openSans(
-        fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+        fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
     displayLarge: GoogleFonts.openSans(
         fontSize: 32, fontWeight: FontWeight.w900, color: Colors.grey.shade200),
     displayMedium: GoogleFonts.openSans(
@@ -75,6 +75,8 @@ class UnisphereTheme {
         onSecondary: Colors.white,
         surface: Colors.grey.shade400,
         onSurface: Colors.white,
+        tertiary: Colors.grey.shade200,
+        onTertiary: Colors.grey.shade900,
       ),
       appBarTheme: AppBarTheme(
         titleSpacing: 0.0,
@@ -100,14 +102,17 @@ class UnisphereTheme {
                 GoogleFonts.lato(color: Colors.grey.shade200, fontSize: 22)));
     return themeData.copyWith(
       colorScheme: themeData.colorScheme.copyWith(
-          background: Color.fromARGB(255, 60, 60, 60),
-          onBackground: Color.fromARGB(255, 255, 255, 255),
-          primary: Colors.blueAccent,
-          secondary: Colors.red,
-          error: Colors.red,
-          onError: Colors.white,
-          surface: Colors.grey.shade700,
-          onSurface: Colors.grey.shade200),
+        background: Color.fromARGB(255, 60, 60, 60),
+        onBackground: Color.fromARGB(255, 255, 255, 255),
+        primary: Colors.blueAccent,
+        secondary: Colors.red,
+        error: Colors.red,
+        onError: Colors.white,
+        surface: Colors.grey.shade700,
+        onSurface: Colors.grey.shade200,
+        tertiary: Colors.grey.shade800,
+        onTertiary: Colors.grey.shade300,
+      ),
       appBarTheme: AppBarTheme(
         titleSpacing: 0.0,
         centerTitle: true,

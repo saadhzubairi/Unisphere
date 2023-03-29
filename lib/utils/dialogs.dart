@@ -30,14 +30,14 @@ class Dialogs {
         content: Text(
           msg,
           style: GoogleFonts.openSans(
-              fontWeight: FontWeight.w600, fontSize: 16, color: Colors.white),
+              fontWeight: FontWeight.w400, fontSize: 15, color: Colors.black),
           //textAlign: TextAlign.center,
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Colors.grey.shade200,
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
           label: "dismiss",
-          textColor: Theme.of(context).colorScheme.onPrimary,
+          textColor: Theme.of(context).colorScheme.primary,
           onPressed: () {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           },

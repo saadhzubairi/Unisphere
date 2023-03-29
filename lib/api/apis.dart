@@ -77,4 +77,10 @@ class APIs {
         .doc(cUser.uid)
         .update({'image': me.image});
   }
+
+  /*CHAT SCREEN STUFF*/
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
+    return firestore.collection('messages').snapshots();
+  }
 }
