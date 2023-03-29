@@ -4,6 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
+import 'package:unione/model/message.dart';
+import 'package:unione/widgets/message_card.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key, required this.chatUser});
@@ -13,6 +15,8 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  List<Message> _list = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
         foregroundColor: Colors.grey.shade500,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.fromLTRB(10, 5, 10, 35),
         child: Column(
           children: [
             Expanded(
@@ -85,13 +89,35 @@ class _ChatScreenState extends State<ChatScreen> {
                     case ConnectionState.done:
                       final data = snapshot.data?.docs;
                       print("[+] DATA:: ${jsonEncode(data![0].data())} ");
-                      final _list = [];
+                      _list.clear();
+                      _list.add(Message(
+                          toId: "toId",
+                          msg:
+                              "In publishing and graphic design, Lorem ipsum is a text commonly used to demonstrate the visual form of a document",
+                          read: "read",
+                          type: Type.text,
+                          sent: "123",
+                          fromId: "fromId"));
+                      _list.add(Message(
+                          toId: "toId",
+                          msg: "fucking  😭😭😭",
+                          read: "read",
+                          type: Type.text,
+                          sent: "123",
+                          fromId: "jukh2Q6iohOFhmbKE0hcvvNA1z22"));
+                      _list.add(Message(
+                          toId: "toId",
+                          msg: "msg3",
+                          read: "read",
+                          type: Type.text,
+                          sent: "123",
+                          fromId: "fromId"));
                       if (_list.isNotEmpty) {
                         return ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           itemCount: _list.length,
                           itemBuilder: (context, i) {
-                            return Text("message: ${_list[i]}");
+                            return MessageCard(message: _list[i]);
                           },
                         );
                       } else {
@@ -107,9 +133,9 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
             _chatInput(),
-            SizedBox(
+            /* SizedBox(
               height: MediaQuery.of(context).viewInsets.bottom == 0 ? 40 : 12,
-            )
+            ) */
           ],
         ),
       ),
