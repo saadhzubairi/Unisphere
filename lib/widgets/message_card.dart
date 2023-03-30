@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/message.dart';
+import 'package:unione/utils/date_time_util.dart';
 
 class MessageCard extends StatefulWidget {
   final Message message;
@@ -42,28 +43,42 @@ class _MessageCardState extends State<MessageCard> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
-                    child: Text(widget.message.msg),
+                    child: Text(
+                      widget.message.msg,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 5, 15, 12),
+                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          "12:00",
+                          DateUtil.getFormattedTime(
+                              context, widget.message.sent),
                           textAlign: TextAlign.right,
-                          style: Theme.of(context).textTheme.labelSmall,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .labelSmall!
+                                .fontSize,
+                          ),
                         ),
                         const SizedBox(
                           width: 8,
                         ),
-                        Icon(
-                          Icons.done_all_rounded,
-                          size: 15,
-                          color: Theme.of(context).colorScheme.scrim,
-                        ),
+                        widget.message.read.isEmpty
+                            ? Icon(Icons.done_rounded,
+                                size: 18,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .outlineVariant)
+                            : Icon(Icons.done_all_rounded,
+                                size: 18, color: Colors.white),
                       ],
                     ),
                   )
@@ -77,6 +92,11 @@ class _MessageCardState extends State<MessageCard> {
   }
 
   Widget _greyMessage() {
+    if (widget.message.read.isEmpty) {
+      APIs.updateMessageReadStatus(widget.message);
+      print("read updated of '${widget.message.msg}'");
+    }
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Row(
@@ -101,9 +121,9 @@ class _MessageCardState extends State<MessageCard> {
                     child: Text(widget.message.msg),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 5, 15, 12),
+                    padding: const EdgeInsets.fromLTRB(15, 5, 15, 12),
                     child: Text(
-                      "12:00",
+                      DateUtil.getFormattedTime(context, widget.message.sent),
                       textAlign: TextAlign.right,
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
