@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:unione/model/chat_user.dart';
+import 'package:unione/model/message.dart';
 
 class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
@@ -79,8 +80,50 @@ class APIs {
   }
 
   /*CHAT SCREEN STUFF*/
+  //chats (collection) --> convo_id (doc) --> message (collection) --> message (doc)
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages() {
-    return firestore.collection('messages').snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllMessages(
+      ChatUser user) {
+    return firestore
+        .collection('chats/${getConversationID(user.id)}/messages/')
+        .snapshots();
+  }
+
+  static String getConversationID(String id) =>
+      cUser.uid.hashCode <= id.hashCode
+          ? '${cUser.uid}_$id'
+          : '${id}_${cUser.uid}';
+
+  static Future<void> sendMessage(ChatUser user, String message) async {
+    final sentTime = DateTime.now().millisecondsSinceEpoch.toString();
+
+    //message to send:
+    final _message = Message(
+        toId: user.id,
+        msg: message,
+        read: '',
+        type: Type.text,
+        sent: sentTime,
+        fromId: cUser.uid);
+
+    final ref =
+        firestore.collection('chats/${getConversationID(user.id)}/messages/');
+    await ref.doc(sentTime).set(_message.toJson());
+  }
+
+  static Future<void> updateMessageReadStatus(Message message) async {
+    firestore
+        .collection('chats/${getConversationID(message.fromId)}/messages/')
+        .doc(message.sent)
+        .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(
+      ChatUser user) {
+    return firestore
+        .collection('chats/${getConversationID(user.id)}/messages/')
+        .orderBy('sent', descending: true)
+        .limit(1)
+        .snapshots();
   }
 }
