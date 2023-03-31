@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:unione/api/apis.dart';
@@ -42,6 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     APIs.getSelfInfo();
+    APIs.updateActiveStatus(true);
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      print("Messsage: $message");
+      if (message.toString().contains('pause')) APIs.updateActiveStatus(false);
+      if (message.toString().contains('inactive'))
+        APIs.updateActiveStatus(false);
+      if (message.toString().contains('resume')) APIs.updateActiveStatus(true);
+      return Future.value(message);
+    });
   }
 
   @override
