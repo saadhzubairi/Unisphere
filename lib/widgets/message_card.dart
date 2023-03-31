@@ -4,6 +4,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/message.dart';
+import 'package:unione/screens/view_chat_image.dart';
+import 'package:unione/screens/view_profile_image.dart';
 import 'package:unione/utils/date_time_util.dart';
 
 class MessageCard extends StatefulWidget {
@@ -60,18 +62,28 @@ class _MessageCardState extends State<MessageCard> {
                               bottomLeft: Radius.circular(20),
                               topLeft: Radius.circular(20),
                             ),
-                            child: CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              width: 300,
-                              height: 300,
-                              imageUrl: widget.message.msg,
-                              placeholder: (context, url) => const Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
+                            child: InkWell(
+                              onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (builder) => ViewChatImage(
+                                          imgUrl: widget.message.msg))),
+                              child: Hero(
+                                tag: 'image',
+                                child: CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  width: 300,
+                                  height: 300,
+                                  imageUrl: widget.message.msg,
+                                  placeholder: (context, url) => const Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(
+                                          Icons.image_not_supported_outlined),
                                 ),
                               ),
-                              errorWidget: (context, url, error) => const Icon(
-                                  Icons.image_not_supported_outlined),
                             ),
                           ),
                         ),
@@ -161,17 +173,27 @@ class _MessageCardState extends State<MessageCard> {
                               bottomLeft: Radius.circular(20),
                               topLeft: Radius.circular(0),
                             ),
-                            child: CachedNetworkImage(
-                              width: 300,
-                              height: 300,
-                              imageUrl: widget.message.msg,
-                              placeholder: (context, url) => Center(
-                                child: const CircularProgressIndicator(
-                                  color: Colors.white,
+                            child: InkWell(
+                              onTap: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (builder) => ViewChatImage(
+                                          imgUrl: widget.message.msg))),
+                              child: Hero(
+                                tag: 'image',
+                                child: CachedNetworkImage(
+                                  width: 300,
+                                  height: 300,
+                                  imageUrl: widget.message.msg,
+                                  placeholder: (context, url) => Center(
+                                    child: const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(
+                                          Icons.image_not_supported_outlined),
                                 ),
                               ),
-                              errorWidget: (context, url, error) => const Icon(
-                                  Icons.image_not_supported_outlined),
                             ),
                           ),
                         ),

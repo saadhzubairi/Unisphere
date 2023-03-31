@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/model/message.dart';
+import 'package:unione/screens/view_profile_screen.dart';
 import 'package:unione/utils/date_time_util.dart';
 import 'package:unione/widgets/message_card.dart';
 
@@ -40,7 +41,9 @@ class _ChatScreenState extends State<ChatScreen> {
         flexibleSpace: Padding(
           padding: const EdgeInsets.fromLTRB(0, 31, 0, 0),
           child: InkWell(
-            onTap: () => null,
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    ViewProfileScreen(cUser: widget.chatUser))),
             splashColor: Theme.of(context).colorScheme.primary,
             child: StreamBuilder(
               stream: APIs.getUserInfo(widget.chatUser),
@@ -60,16 +63,19 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: CachedNetworkImage(
-                        width: 35,
-                        height: 35,
-                        imageUrl: list!.isNotEmpty
-                            ? list[0].image
-                            : widget.chatUser.image,
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.person),
+                      child: Hero(
+                        tag: 'image',
+                        child: CachedNetworkImage(
+                          width: 35,
+                          height: 35,
+                          imageUrl: list!.isNotEmpty
+                              ? list[0].image
+                              : widget.chatUser.image,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.person),
+                        ),
                       ),
                     ),
                     const SizedBox(

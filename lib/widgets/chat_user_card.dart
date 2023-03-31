@@ -49,15 +49,18 @@ class _ChatUserCardState extends State<ChatUserCard> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100)),
                   leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: CachedNetworkImage(
-                      width: 40,
-                      height: 40,
-                      imageUrl: widget.user.image,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.person),
+                    borderRadius: BorderRadius.circular(100),
+                    child: Hero(
+                      tag: 'image',
+                      child: CachedNetworkImage(
+                        width: 40,
+                        height: 40,
+                        imageUrl: widget.user.image,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.person),
+                      ),
                     ),
                   ),
                   title: Text(widget.user.name,
