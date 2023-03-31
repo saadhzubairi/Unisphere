@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -86,6 +85,7 @@ class APIs {
       ChatUser user) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages/')
+        .orderBy('sent', descending: true)
         .snapshots();
   }
 
@@ -94,7 +94,8 @@ class APIs {
           ? '${cUser.uid}_$id'
           : '${id}_${cUser.uid}';
 
-  static Future<void> sendMessage(ChatUser user, String message) async {
+  static Future<void> sendMessage(
+      ChatUser user, String message, Type type) async {
     final sentTime = DateTime.now().millisecondsSinceEpoch.toString();
 
     //message to send:
@@ -102,7 +103,7 @@ class APIs {
         toId: user.id,
         msg: message,
         read: '',
-        type: Type.text,
+        type: type,
         sent: sentTime,
         fromId: cUser.uid);
 
@@ -125,5 +126,15 @@ class APIs {
         .orderBy('sent', descending: true)
         .limit(1)
         .snapshots();
+  }
+
+  static Future<void> sendChatImage(ChatUser chatUser, File file) async {
+    final ext = file.path.split(".").last;
+    final ref = storage.ref().child(
+        "images/${getConversationID(chatUser.id)}/${DateTime.now().millisecondsSinceEpoch}.$ext");
+    await ref.putFile(file, SettableMetadata(contentType: 'image/$ext'));
+
+    final imgUrl = await ref.getDownloadURL();
+    await sendMessage(chatUser, imgUrl, Type.image);
   }
 }

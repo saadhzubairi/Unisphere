@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -31,7 +32,7 @@ class _MessageCardState extends State<MessageCard> {
               constraints: const BoxConstraints(maxWidth: 315),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(0),
                   bottomRight: Radius.circular(20),
                   bottomLeft: Radius.circular(20),
@@ -41,14 +42,39 @@ class _MessageCardState extends State<MessageCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
-                    child: Text(
-                      widget.message.msg,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onPrimary),
-                    ),
-                  ),
+                  widget.message.type == Type.text
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
+                          child: Text(
+                            widget.message.msg,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onPrimary),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(0),
+                              bottomRight: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
+                              topLeft: Radius.circular(20),
+                            ),
+                            child: CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              width: 300,
+                              height: 300,
+                              imageUrl: widget.message.msg,
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => const Icon(
+                                  Icons.image_not_supported_outlined),
+                            ),
+                          ),
+                        ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 5, 15, 12),
                     child: Row(
@@ -106,7 +132,7 @@ class _MessageCardState extends State<MessageCard> {
               constraints: const BoxConstraints(maxWidth: 315),
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.tertiary,
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   topRight: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                   bottomLeft: Radius.circular(20),
@@ -116,10 +142,39 @@ class _MessageCardState extends State<MessageCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
-                    child: Text(widget.message.msg),
-                  ),
+                  widget.message.type == Type.text
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 12, 15, 0),
+                          child: Text(
+                            widget.message.msg,
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.onBackground),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                              bottomLeft: Radius.circular(20),
+                              topLeft: Radius.circular(0),
+                            ),
+                            child: CachedNetworkImage(
+                              width: 300,
+                              height: 300,
+                              imageUrl: widget.message.msg,
+                              placeholder: (context, url) => Center(
+                                child: const CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => const Icon(
+                                  Icons.image_not_supported_outlined),
+                            ),
+                          ),
+                        ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 5, 15, 12),
                     child: Text(

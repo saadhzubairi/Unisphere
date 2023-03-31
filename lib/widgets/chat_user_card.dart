@@ -73,19 +73,34 @@ class _ChatUserCardState extends State<ChatUserCard> {
                             SizedBox(
                               width: 5,
                             ),
-                            Flexible(
-                              child: Container(
-                                child: Text(
-                                    overflow: TextOverflow.ellipsis,
-                                    lMessage != null
-                                        ? lMessage!.msg
-                                        : widget.user.about,
-                                    maxLines: 1,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium),
-                              ),
-                            ),
+                            lMessage!.type == Type.text
+                                ?
+                                //MESSAGE
+                                Flexible(
+                                    child: Container(
+                                      child: Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          lMessage != null
+                                              ? lMessage!.msg
+                                              : widget.user.about,
+                                          maxLines: 1,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium),
+                                    ),
+                                  )
+                                : Row(
+                                    children: [
+                                      Icon(Icons.image, size: 18),
+                                      SizedBox(
+                                        width: 3,
+                                      ),
+                                      Text("image",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelMedium)
+                                    ],
+                                  )
                           ],
                         )
                       : Text(

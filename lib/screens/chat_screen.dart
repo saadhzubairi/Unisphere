@@ -1,13 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/model/message.dart';
 import 'package:unione/widgets/message_card.dart';
 
+import '../utils/dialogs.dart';
 import '../utils/theme_state.dart';
 import '../widgets/icon_w_background.dart';
 
@@ -22,6 +26,8 @@ class _ChatScreenState extends State<ChatScreen> {
   List<Message> _list = [];
 
   final _controller = TextEditingController();
+
+  bool isUploading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +124,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             [];
                         if (_list.isNotEmpty) {
                           return ListView.builder(
+                            reverse: true,
                             physics: const BouncingScrollPhysics(),
                             itemCount: _list.length,
                             itemBuilder: (context, index) {
@@ -137,6 +144,14 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
+            if (isUploading)
+              const Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 15, 30),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
             _chatInput(),
             /* SizedBox(
               height: MediaQuery.of(context).viewInsets.bottom == 0 ? 40 : 12,
@@ -146,6 +161,9 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
+  String? _img;
+  File? _imgFile;
 
   Widget _chatInput() {
     return Row(
@@ -173,7 +191,30 @@ class _ChatScreenState extends State<ChatScreen> {
               suffixIcon: Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final ImagePicker _picker = ImagePicker();
+                    final XFile? image =
+                        await _picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      setState(() {
+                        _img = image.path;
+                      });
+                      _cropImage().then((value) {
+                        if (_imgFile != null) {
+                          isUploading = true;
+                          APIs.sendChatImage(widget.chatUser, _imgFile!)
+                              .then((value) {
+                            setState(() {
+                              isUploading = false;
+                            });
+                          });
+                          _imgFile = null;
+                        }
+                      });
+                    } else {
+                      Dialogs.showThemedSnackbar(context, "Error Occured");
+                    }
+                  },
                   icon: Icon(
                     Icons.image_outlined,
                     color: Theme.of(context).colorScheme.onTertiary,
@@ -191,7 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
             icon: const Icon(Icons.send, color: Colors.white, size: 20),
             onPressed: () {
               if (_controller.text.isNotEmpty) {
-                APIs.sendMessage(widget.chatUser, _controller.text);
+                APIs.sendMessage(widget.chatUser, _controller.text, Type.text);
                 _controller.text = '';
               }
             },
@@ -199,5 +240,51 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _cropImage() async {
+    if (File(_img!) != null) {
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: File(_img!).path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 100,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Selected Image',
+            toolbarColor: Colors.black,
+            cropGridColumnCount: 2,
+            cropGridRowCount: 2,
+            cropFrameStrokeWidth: 10,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: false,
+            hideBottomControls: false,
+            showCropGrid: true,
+            backgroundColor: Theme.of(context).colorScheme.background,
+          ),
+          IOSUiSettings(
+            title: 'Crop Image',
+          ),
+          WebUiSettings(
+            context: context,
+            presentStyle: CropperPresentStyle.dialog,
+            boundary: const CroppieBoundary(
+              width: 520,
+              height: 520,
+            ),
+            viewPort:
+                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+            enableExif: true,
+            enableZoom: true,
+            showZoomer: true,
+          ),
+        ],
+      );
+      if (croppedFile != null) {
+        setState(() {
+          _imgFile = File(croppedFile.path);
+        });
+      }
+    }
   }
 }
