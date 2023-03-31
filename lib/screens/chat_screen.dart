@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/model/message.dart';
+import 'package:unione/utils/date_time_util.dart';
 import 'package:unione/widgets/message_card.dart';
 
 import '../utils/dialogs.dart';
@@ -41,45 +42,66 @@ class _ChatScreenState extends State<ChatScreen> {
           child: InkWell(
             onTap: () => null,
             splashColor: Theme.of(context).colorScheme.primary,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(Icons.arrow_back),
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: CachedNetworkImage(
-                    width: 35,
-                    height: 35,
-                    imageUrl: widget.chatUser.image,
-                    placeholder: (context, url) =>
-                        const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.person),
-                  ),
-                ),
-                const SizedBox(
-                  width: 15,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: StreamBuilder(
+              stream: APIs.getUserInfo(widget.chatUser),
+              builder: (context, snapshot) {
+                final data = snapshot.data?.docs;
+                final list =
+                    data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+                        [];
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      widget.chatUser.name,
-                      style: Theme.of(context).textTheme.displaySmall,
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(Icons.arrow_back),
                     ),
-                    Text(
-                      "Last Seen N/A",
-                      style: Theme.of(context).textTheme.labelSmall,
-                    )
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: CachedNetworkImage(
+                        width: 35,
+                        height: 35,
+                        imageUrl: list!.isNotEmpty
+                            ? list[0].image
+                            : widget.chatUser.image,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.person),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          list!.isNotEmpty
+                              ? list[0].name
+                              : widget.chatUser.name,
+                          style: Theme.of(context).textTheme.displaySmall,
+                        ),
+                        Text(
+                          list!.isNotEmpty
+                              ? list[0].isOnline
+                                  ? 'Online'
+                                  : DateUtil.getLastActiveTime(
+                                      context: context,
+                                      lastActive: list[0].lastActive)
+                              : DateUtil.getLastActiveTime(
+                                  context: context,
+                                  lastActive: widget.chatUser.lastActive),
+                          style: Theme.of(context).textTheme.labelSmall,
+                        )
+                      ],
+                    ),
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),
