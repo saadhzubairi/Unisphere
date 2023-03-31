@@ -31,7 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (_) => const LoginAuthScreen(),
               ),
             ),
-            APIs.auth = FirebaseAuth.instance
+            APIs.auth = FirebaseAuth.instance,
+            APIs.updateActiveStatus(false),
           },
         );
   }
@@ -44,7 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     APIs.getSelfInfo();
-    APIs.updateActiveStatus(true);
+    Future.delayed(Duration(milliseconds: 1)).then(
+      (value) => SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarBrightness: Theme.of(context).brightness,
+          statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
+          systemNavigationBarColor: Theme.of(context).colorScheme.shadow,
+        ),
+      ),
+    );
     SystemChannels.lifecycle.setMessageHandler((message) {
       if (APIs.auth.currentUser != null) {
         if (message.toString().contains('pause')) {

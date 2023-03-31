@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -25,169 +26,197 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  @override
+  void initState() {
+    Future.delayed(Duration(milliseconds: 1)).then(
+      (value) => SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarBrightness: Theme.of(context).brightness,
+          statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
+          systemNavigationBarColor: Theme.of(context).colorScheme.shadow,
+        ),
+      ),
+    );
+  }
+
   List<Message> _list = [];
 
   final _controller = TextEditingController();
 
   bool isUploading = false;
 
+  bool _themed = false;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.shadow,
-      appBar: AppBar(
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        flexibleSpace: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 31, 0, 0),
-          child: InkWell(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    ViewProfileScreen(cUser: widget.chatUser))),
-            splashColor: Theme.of(context).colorScheme.primary,
-            child: StreamBuilder(
-              stream: APIs.getUserInfo(widget.chatUser),
-              builder: (context, snapshot) {
-                final data = snapshot.data?.docs;
-                final list =
-                    data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
-                        [];
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(Icons.arrow_back),
-                    ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Hero(
-                        tag: 'image',
-                        child: CachedNetworkImage(
-                          width: 35,
-                          height: 35,
-                          imageUrl: list!.isNotEmpty
-                              ? list[0].image
-                              : widget.chatUser.image,
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.person),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.shadow,
+        appBar: AppBar(
+          centerTitle: false,
+          automaticallyImplyLeading: false,
+          flexibleSpace: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+            child: InkWell(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      ViewProfileScreen(cUser: widget.chatUser))),
+              splashColor: Theme.of(context).colorScheme.primary,
+              child: StreamBuilder(
+                stream: APIs.getUserInfo(widget.chatUser),
+                builder: (context, snapshot) {
+                  final data = snapshot.data?.docs;
+                  final list =
+                      data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+                          [];
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: Icon(Icons.arrow_back),
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Hero(
+                          tag: 'image',
+                          child: CachedNetworkImage(
+                            width: 35,
+                            height: 35,
+                            imageUrl: list!.isNotEmpty
+                                ? list[0].image
+                                : widget.chatUser.image,
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                                const Icon(Icons.person),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          list!.isNotEmpty
-                              ? list[0].name
-                              : widget.chatUser.name,
-                          style: Theme.of(context).textTheme.displaySmall,
-                        ),
-                        Text(
-                          list!.isNotEmpty
-                              ? list[0].isOnline
-                                  ? 'Online'
-                                  : DateUtil.getLastActiveTime(
-                                      context: context,
-                                      lastActive: list[0].lastActive)
-                              : DateUtil.getLastActiveTime(
-                                  context: context,
-                                  lastActive: widget.chatUser.lastActive),
-                          style: Theme.of(context).textTheme.labelSmall,
-                        )
-                      ],
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ),
-        foregroundColor: Colors.grey.shade500,
-        actions: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: IconWBackground(
-              icon: Icons.dark_mode,
-              onTap: () {
-                Provider.of<ThemeState>(context, listen: false).toggleTheme();
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(
-            10, 5, 10, MediaQuery.of(context).viewInsets.bottom == 0 ? 35 : 15),
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: StreamBuilder(
-                  stream: APIs.getAllMessages(widget.chatUser),
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                      case ConnectionState.none:
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      case ConnectionState.active:
-                      case ConnectionState.done:
-                        final data = snapshot.data?.docs;
-                        _list.clear();
-                        _list = data
-                                ?.map((e) => Message.fromJson(e.data()))
-                                .toList() ??
-                            [];
-                        if (_list.isNotEmpty) {
-                          return ListView.builder(
-                            reverse: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: _list.length,
-                            itemBuilder: (context, index) {
-                              return MessageCard(
-                                message: _list[index],
-                                name: widget.chatUser.name,
-                              );
-                            },
-                          );
-                        } else {
-                          return const Center(
-                            child: Text(
-                              "Say Hi! 👋🏻",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          );
-                        }
-                    }
-                  },
-                ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            list!.isNotEmpty
+                                ? list[0].name
+                                : widget.chatUser.name,
+                            style: Theme.of(context).textTheme.displaySmall,
+                          ),
+                          Text(
+                            list!.isNotEmpty
+                                ? list[0].isOnline
+                                    ? 'Online'
+                                    : DateUtil.getLastActiveTime(
+                                        context: context,
+                                        lastActive: list[0].lastActive)
+                                : DateUtil.getLastActiveTime(
+                                    context: context,
+                                    lastActive: widget.chatUser.lastActive),
+                            style: Theme.of(context).textTheme.labelSmall,
+                          )
+                        ],
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
-            if (isUploading)
-              const Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 0, 15, 30),
-                  child: CircularProgressIndicator(),
-                ),
+          ),
+          foregroundColor: Colors.grey.shade500,
+          actions: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconWBackground(
+                icon: Icons.dark_mode,
+                onTap: () {
+                  Provider.of<ThemeState>(context, listen: false).toggleTheme();
+
+                  Future.delayed(Duration(milliseconds: 100)).then(
+                    (value) => SystemChrome.setSystemUIOverlayStyle(
+                      SystemUiOverlayStyle(
+                        statusBarBrightness: Theme.of(context).brightness,
+                        statusBarColor:
+                            Theme.of(context).appBarTheme.backgroundColor,
+                        systemNavigationBarColor:
+                            Theme.of(context).colorScheme.shadow,
+                      ),
+                    ),
+                  );
+                },
               ),
-            _chatInput(),
-            /* SizedBox(
-              height: MediaQuery.of(context).viewInsets.bottom == 0 ? 40 : 12,
-            ) */
+            ),
+            const SizedBox(width: 10),
           ],
+        ),
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(10, 5, 10, 7),
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: StreamBuilder(
+                    stream: APIs.getAllMessages(widget.chatUser),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                        case ConnectionState.none:
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        case ConnectionState.active:
+                        case ConnectionState.done:
+                          final data = snapshot.data?.docs;
+                          _list.clear();
+                          _list = data
+                                  ?.map((e) => Message.fromJson(e.data()))
+                                  .toList() ??
+                              [];
+                          if (_list.isNotEmpty) {
+                            return ListView.builder(
+                              reverse: true,
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: _list.length,
+                              itemBuilder: (context, index) {
+                                return MessageCard(
+                                  message: _list[index],
+                                  name: widget.chatUser.name,
+                                );
+                              },
+                            );
+                          } else {
+                            return const Center(
+                              child: Text(
+                                "Say Hi! 👋🏻",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            );
+                          }
+                      }
+                    },
+                  ),
+                ),
+              ),
+              if (isUploading)
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 15, 30),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              _chatInput(),
+              /* SizedBox(
+                height: MediaQuery.of(context).viewInsets.bottom == 0 ? 40 : 12,
+              ) */
+            ],
+          ),
         ),
       ),
     );

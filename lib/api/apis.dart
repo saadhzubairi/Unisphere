@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/model/message.dart';
+import 'package:http/http.dart' as http;
 
 class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
@@ -15,23 +19,30 @@ class APIs {
   static User get cUser => auth.currentUser!;
 
   //for storing self info:
-  static late ChatUser me;
+  static late ChatUser me = ChatUser(
+      image: "image",
+      name: "name",
+      about: "about",
+      createdAt: "createdAt",
+      id: "id",
+      lastActive: "lastActive",
+      isOnline: false,
+      pushToken: "pushToken",
+      email: "email");
 
   static Future<bool> userExists() async {
     return (await firestore.collection('users').doc(cUser.uid).get()).exists;
   }
 
   static Future<void> getSelfInfo() async {
-    return await firestore
-        .collection('users')
-        .doc(cUser.uid)
-        .get()
-        .then((user) => {
-              if (user.exists)
-                {me = ChatUser.fromJson(user.data()!)}
-              else
-                {createUser().then((value) => getSelfInfo())}
-            });
+    await firestore.collection('users').doc(cUser.uid).get().then((user) async {
+      if (user.exists) {
+        me = ChatUser.fromJson(user.data()!);
+        await getFirebaseMessagingToken();
+      } else {
+        createUser().then((value) => getSelfInfo());
+      }
+    });
   }
 
   static Future<void> createUser() async {
@@ -89,8 +100,60 @@ class APIs {
   static Future<void> updateActiveStatus(bool isOnline) async {
     return firestore.collection('users').doc(cUser.uid).update({
       'is_online': isOnline,
-      'last_active': DateTime.now().millisecondsSinceEpoch.toString()
+      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+      'push_token': me.pushToken
     });
+  }
+
+  //PUSH NOTIFICATIONS:
+  static FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+
+  static Future<void> getFirebaseMessagingToken() async {
+    await firebaseMessaging.requestPermission();
+    await firebaseMessaging.getToken().then((token) {
+      if (token != null) {
+        me.pushToken = token;
+        log("push_token: $token");
+      }
+    });
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      log('Got a message whilst in the foreground!');
+      log('Message data: ${message.data}');
+
+      if (message.notification != null) {
+        log('Message also contained a notification: ${message.notification}');
+      }
+    });
+  }
+
+  static Future<void> sendPushNotification(
+      ChatUser chatUser, String msg) async {
+    try {
+      final body = {
+        "to": chatUser.pushToken,
+        "notification": {
+          "title": me.name,
+          "body": msg,
+          "android_channel_id": "chats",
+        },
+        "data": {
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+        },
+      };
+      var response =
+          await http.post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+              headers: {
+                HttpHeaders.contentTypeHeader: 'application/json',
+                HttpHeaders.authorizationHeader:
+                    'key=AAAAESmhSWs:APA91bE4OXUuYYaN9_2xzV1vhsoyDjdZrWpM2MfAsEl78Gtm3KunVlYJWfZo3cYDYu4VbhgXY7xBv0LQ9WmQU2993UK-ksKW-UUTq1C5Nd9dbw3pIbW9sYwcBqXFaA_MiTf4RiK7qXCi'
+              },
+              body: jsonEncode(body));
+
+      log('Response status: ${response.statusCode}');
+      log('Response body: ${response.body}');
+    } catch (e) {
+      log('sendPushNotif: ${e.toString()}');
+    }
   }
 
   /*CHAT SCREEN STUFF*/
@@ -124,7 +187,8 @@ class APIs {
 
     final ref =
         firestore.collection('chats/${getConversationID(user.id)}/messages/');
-    await ref.doc(sentTime).set(_message.toJson());
+    await ref.doc(sentTime).set(_message.toJson()).then((value) =>
+        sendPushNotification(user, type == Type.text ? message : "Image"));
   }
 
   static Future<void> updateMessageReadStatus(Message message) async {

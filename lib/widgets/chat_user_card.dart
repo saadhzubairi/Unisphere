@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/model/message.dart';
 import 'package:unione/utils/date_time_util.dart';
+import 'package:unione/utils/profile_dialog.dart';
 
 import '../screens/chat_screen.dart';
 
@@ -50,16 +53,24 @@ class _ChatUserCardState extends State<ChatUserCard> {
                       borderRadius: BorderRadius.circular(100)),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
-                    child: Hero(
-                      tag: 'image',
-                      child: CachedNetworkImage(
-                        width: 40,
-                        height: 40,
-                        imageUrl: widget.user.image,
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.person),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(PageRouteBuilder(
+                            pageBuilder: (context, _, __) =>
+                                ProfileDialog(user: widget.user),
+                            opaque: false));
+                      },
+                      child: Hero(
+                        tag: 'pfimage${widget.user.id}',
+                        child: CachedNetworkImage(
+                          width: 40,
+                          height: 40,
+                          imageUrl: widget.user.image,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.person),
+                        ),
                       ),
                     ),
                   ),

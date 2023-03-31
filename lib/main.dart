@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_notification_channel/flutter_notification_channel.dart';
+import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:flutter_notification_channel/notification_visibility.dart';
 import 'package:provider/provider.dart';
 import 'package:unione/screens/splash_screen.dart';
 import 'utils/theme_state.dart';
@@ -13,8 +16,23 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((value) => {_initializeFirebase()});
-  runApp(const MyApp());
+      .then((value) async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ).then((value) async {
+      await FlutterNotificationChannel.registerNotificationChannel(
+        description: 'Message Notifications on arrival',
+        id: 'chats',
+        importance: NotificationImportance.IMPORTANCE_HIGH,
+        name: 'Chats',
+        visibility: NotificationVisibility.VISIBILITY_PUBLIC,
+        allowBubbles: true,
+        enableVibration: true,
+        enableSound: true,
+        showBadge: true,
+      ).then((value) => runApp(const MyApp()));
+    });
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -37,8 +55,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-_initializeFirebase() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-}
+/* _initializeFirebase() async {
+  ;
+} */

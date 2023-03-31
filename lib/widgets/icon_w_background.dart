@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:unione/unisphere_theme.dart';
 
 class IconWBackground extends StatelessWidget {
-  const IconWBackground({
-    Key? key,
-    required this.icon,
-    required this.onTap,
-  }) : super(key: key);
+  IconWBackground({Key? key, required this.icon, required this.onTap})
+      : super(key: key);
 
   final IconData icon;
   final VoidCallback onTap;
@@ -21,7 +18,12 @@ class IconWBackground extends StatelessWidget {
         splashColor: Theme.of(context).splashColor,
         onTap: onTap,
         child: Padding(
-            padding: const EdgeInsets.all(6), child: Icon(icon, size: 22)),
+            padding: const EdgeInsets.all(6),
+            child: Icon(
+              icon,
+              size: 22,
+              color: Theme.of(context).colorScheme.background,
+            )),
       ),
     );
   }

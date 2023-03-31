@@ -71,22 +71,19 @@ class _MessageCardState extends State<MessageCard> {
                                             time: widget.message.sent,
                                             username: "You",
                                           ))),
-                              child: Hero(
-                                tag: 'image',
-                                child: CachedNetworkImage(
-                                  fit: BoxFit.cover,
-                                  width: 300,
-                                  height: 300,
-                                  imageUrl: widget.message.msg,
-                                  placeholder: (context, url) => const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                width: 300,
+                                height: 300,
+                                imageUrl: widget.message.msg,
+                                placeholder: (context, url) => const Center(
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(
-                                          Icons.image_not_supported_outlined),
                                 ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                        Icons.image_not_supported_outlined),
                               ),
                             ),
                           ),
@@ -185,21 +182,18 @@ class _MessageCardState extends State<MessageCard> {
                                             time: widget.message.sent,
                                             username: widget.name,
                                           ))),
-                              child: Hero(
-                                tag: 'image',
-                                child: CachedNetworkImage(
-                                  width: 300,
-                                  height: 300,
-                                  imageUrl: widget.message.msg,
-                                  placeholder: (context, url) => Center(
-                                    child: const CircularProgressIndicator(
-                                      color: Colors.white,
-                                    ),
+                              child: CachedNetworkImage(
+                                width: 300,
+                                height: 300,
+                                imageUrl: widget.message.msg,
+                                placeholder: (context, url) => Center(
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(
-                                          Icons.image_not_supported_outlined),
                                 ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                        Icons.image_not_supported_outlined),
                               ),
                             ),
                           ),

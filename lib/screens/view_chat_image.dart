@@ -48,21 +48,18 @@ class _ViewChatImageState extends State<ViewChatImage> {
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            Hero(
-              tag: 'image',
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    hideAppBar = !hideAppBar;
-                  });
-                },
-                child: PhotoView(
-                  minScale: PhotoViewComputedScale.contained * 1,
-                  maxScale: PhotoViewComputedScale.covered * 7,
-                  initialScale: PhotoViewComputedScale.contained,
-                  basePosition: Alignment.center,
-                  imageProvider: CachedNetworkImageProvider(widget.imgUrl),
-                ),
+            InkWell(
+              onTap: () {
+                setState(() {
+                  hideAppBar = !hideAppBar;
+                });
+              },
+              child: PhotoView(
+                minScale: PhotoViewComputedScale.contained * 1,
+                maxScale: PhotoViewComputedScale.covered * 7,
+                initialScale: PhotoViewComputedScale.contained,
+                basePosition: Alignment.center,
+                imageProvider: CachedNetworkImageProvider(widget.imgUrl),
               ),
             ),
             Positioned(
