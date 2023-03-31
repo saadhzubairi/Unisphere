@@ -116,12 +116,14 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         padding: const EdgeInsets.only(right: 4),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: lMessage != null
-                                  ? ((lMessage!.fromId != APIs.cUser.uid &&
-                                          lMessage!.read.isEmpty)
-                                      ? Colors.green
-                                      : Colors.transparent)
-                                  : Colors.transparent,
+                              color: widget.user.isOnline
+                                  ? Color.fromARGB(255, 39, 229, 112)
+                                  : lMessage != null
+                                      ? ((lMessage!.fromId != APIs.cUser.uid &&
+                                              lMessage!.read.isEmpty)
+                                          ? Colors.green.shade300
+                                          : Colors.transparent)
+                                      : Colors.transparent,
                               borderRadius: BorderRadius.circular(20)),
                           height: 10,
                           width: 10,

@@ -30,7 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute(
                 builder: (_) => const LoginAuthScreen(),
               ),
-            )
+            ),
+            APIs.auth = FirebaseAuth.instance
           },
         );
   }
@@ -45,11 +46,17 @@ class _HomeScreenState extends State<HomeScreen> {
     APIs.getSelfInfo();
     APIs.updateActiveStatus(true);
     SystemChannels.lifecycle.setMessageHandler((message) {
-      print("Messsage: $message");
-      if (message.toString().contains('pause')) APIs.updateActiveStatus(false);
-      if (message.toString().contains('inactive'))
-        APIs.updateActiveStatus(false);
-      if (message.toString().contains('resume')) APIs.updateActiveStatus(true);
+      if (APIs.auth.currentUser != null) {
+        if (message.toString().contains('pause')) {
+          APIs.updateActiveStatus(false);
+        }
+        if (message.toString().contains('inactive')) {
+          APIs.updateActiveStatus(false);
+        }
+        if (message.toString().contains('resume')) {
+          APIs.updateActiveStatus(true);
+        }
+      }
       return Future.value(message);
     });
   }
@@ -139,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: IconWBackground(
                     icon: Icons.logout,
                     onTap: () {
+                      APIs.updateActiveStatus(false);
                       _signOut();
                     }),
               ),
