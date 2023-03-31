@@ -154,10 +154,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 alignment: Alignment.centerRight,
                 child: IconWBackground(
                     icon: Icons.logout,
-                    onTap: () {
-                      APIs.updateActiveStatus(false);
-                      _signOut();
-                    }),
+                    onTap: () => APIs.updateActiveStatus(false)
+                        .then((value) => _signOut())),
               ),
               const SizedBox(width: 10),
             ],
