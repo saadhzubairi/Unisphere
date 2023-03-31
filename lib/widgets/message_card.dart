@@ -10,7 +10,8 @@ import 'package:unione/utils/date_time_util.dart';
 
 class MessageCard extends StatefulWidget {
   final Message message;
-  const MessageCard({super.key, required this.message});
+  final String name;
+  const MessageCard({super.key, required this.message, required this.name});
   @override
   State<MessageCard> createState() => _MessageCardState();
 }
@@ -63,10 +64,13 @@ class _MessageCardState extends State<MessageCard> {
                               topLeft: Radius.circular(20),
                             ),
                             child: InkWell(
-                              onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
+                              onTap: () =>
+                                  Navigator.of(context).push(MaterialPageRoute(
                                       builder: (builder) => ViewChatImage(
-                                          imgUrl: widget.message.msg))),
+                                            imgUrl: widget.message.msg,
+                                            time: widget.message.sent,
+                                            username: "You",
+                                          ))),
                               child: Hero(
                                 tag: 'image',
                                 child: CachedNetworkImage(
@@ -174,10 +178,13 @@ class _MessageCardState extends State<MessageCard> {
                               topLeft: Radius.circular(0),
                             ),
                             child: InkWell(
-                              onTap: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
+                              onTap: () =>
+                                  Navigator.of(context).push(MaterialPageRoute(
                                       builder: (builder) => ViewChatImage(
-                                          imgUrl: widget.message.msg))),
+                                            imgUrl: widget.message.msg,
+                                            time: widget.message.sent,
+                                            username: widget.name,
+                                          ))),
                               child: Hero(
                                 tag: 'image',
                                 child: CachedNetworkImage(

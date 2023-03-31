@@ -2,10 +2,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:unione/api/apis.dart';
+import 'package:unione/utils/date_time_util.dart';
 
 class ViewChatImage extends StatefulWidget {
   final String imgUrl;
-  const ViewChatImage({required this.imgUrl, super.key});
+  final String username;
+  final String time;
+  const ViewChatImage(
+      {required this.imgUrl,
+      super.key,
+      required this.username,
+      required this.time});
 
   @override
   State<ViewChatImage> createState() => _ViewChatImageState();
@@ -19,13 +27,16 @@ class _ViewChatImageState extends State<ViewChatImage> {
     setState(() {});
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-    Future.delayed(Duration(milliseconds: 1)).then((value) =>
-        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    Future.delayed(Duration(milliseconds: 1)).then(
+      (value) => SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
           statusBarColor: Color.fromARGB(81, 0, 0, 0),
           systemNavigationBarColor: Color.fromARGB(81, 0, 0, 0),
-        )));
+        ),
+      ),
+    );
 
     super.initState();
   }
@@ -75,9 +86,19 @@ class _ViewChatImageState extends State<ViewChatImage> {
                       const SizedBox(
                         width: 5,
                       ),
-                      const Text(
-                        "Photo",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.username,
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          Text(
+                            DateUtil.getFormattedTime(context, widget.time),
+                            style: TextStyle(color: Colors.white, fontSize: 13),
+                          ),
+                        ],
                       )
                     ],
                   ),
