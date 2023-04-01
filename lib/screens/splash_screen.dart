@@ -42,7 +42,8 @@ class _SplashScreenState extends State<SplashScreen>
       end: 0,
     ).animate(_controller);
 
-    _controller.forward();
+    Future.delayed(Duration(milliseconds: 1))
+        .then((value) => _controller.forward());
 
     setState(() {});
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +6,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/screens/auth/login_screen.dart';
-import 'package:unione/screens/chat_screen.dart';
 import 'package:unione/screens/user_screen.dart';
 import 'package:unione/widgets/chat_user_card.dart';
 import '../widgets/icon_w_background.dart';
