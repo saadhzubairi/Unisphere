@@ -19,19 +19,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   _signOut() async {
+    APIs.updateActiveStatus(false);
     await FirebaseAuth.instance.signOut();
     await GoogleSignIn().signOut().then(
-          (value) => {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (_) => const LoginAuthScreen(),
-              ),
-            ),
-            APIs.auth = FirebaseAuth.instance,
-            APIs.updateActiveStatus(false),
-          },
+      (value) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const LoginAuthScreen(),
+          ),
         );
+        APIs.auth = FirebaseAuth.instance;
+      },
+    );
   }
 
   List<ChatUser> list = [];
