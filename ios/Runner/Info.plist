@@ -64,5 +64,8 @@
 	<string>App requires access to the photo library for picking pictures.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>App requires access to the camera for taing pictures.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>App requires access to local storage for saving pictures.</string>
+	
 </dict>
 </plist>
