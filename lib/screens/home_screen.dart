@@ -42,13 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     APIs.getSelfInfo();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom]);
     Future.delayed(Duration(milliseconds: 1)).then(
       (value) => SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
+            /* statusBarBrightness: Theme.of(context).brightness,
           statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
-          systemNavigationBarColor: Theme.of(context).colorScheme.shadow,
-        ),
+          systemNavigationBarIconBrightness: Theme.of(context).brightness,
+          systemNavigationBarColor: Theme.of(context).colorScheme.shadow, */
+            ),
       ),
     );
     SystemChannels.lifecycle.setMessageHandler((message) {
@@ -92,21 +94,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ? Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: TextFormField(
-                      decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Name or Email..."),
+                      decoration: const InputDecoration(border: InputBorder.none, hintText: "Name or Email..."),
                       style: Theme.of(context).textTheme.bodyMedium,
                       autofocus: true,
                       onChanged: (val) {
                         //search logic:
                         _searchList.clear();
                         for (var i in list) {
-                          if ((i.name
-                                      .toLowerCase()
-                                      .contains(val.toLowerCase()) ||
-                                  i.email
-                                      .toLowerCase()
-                                      .contains(val.toLowerCase())) &&
+                          if ((i.name.toLowerCase().contains(val.toLowerCase()) ||
+                                  i.email.toLowerCase().contains(val.toLowerCase())) &&
                               val.isNotEmpty) {
                             _searchList.add(i);
                           }
@@ -150,9 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconWBackground(
-                    icon: Icons.logout,
-                    onTap: () => APIs.updateActiveStatus(false)
-                        .then((value) => _signOut())),
+                    icon: Icons.logout, onTap: () => APIs.updateActiveStatus(false).then((value) => _signOut())),
               ),
               const SizedBox(width: 10),
             ],
@@ -183,8 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-              onPressed: () {}, child: const Icon(Icons.textsms)),
+          floatingActionButton: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.textsms)),
         ),
       ),
     );
