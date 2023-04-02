@@ -2,17 +2,12 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/screens/view_profile_image.dart';
 import 'package:unione/utils/date_time_util.dart';
-import 'package:unione/utils/dialogs.dart';
-
 import '../utils/theme_state.dart';
-import '../widgets/custom_text_field.dart';
 import '../widgets/icon_w_background.dart';
 
 enum AppState {
@@ -69,8 +64,21 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
               child: IconWBackground(
                   icon: Icons.dark_mode,
                   onTap: () {
-                    Provider.of<ThemeState>(context, listen: false)
-                        .toggleTheme();
+                    Provider.of<ThemeState>(context, listen: false).toggleTheme();
+                    Future.delayed(Duration(milliseconds: 100)).then(
+                      (value) => SystemChrome.setSystemUIOverlayStyle(
+                        SystemUiOverlayStyle(
+                          statusBarColor: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade200
+                              : Colors.grey.shade900,
+                          systemNavigationBarColor: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : const Color.fromARGB(255, 26, 26, 26),
+                          statusBarIconBrightness:
+                              Theme.of(context).brightness != Brightness.dark ? Brightness.light : Brightness.dark,
+                        ),
+                      ),
+                    );
                   }),
             ),
             const SizedBox(width: 10),
@@ -91,9 +99,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                     children: [
                       InkWell(
                         onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (builder) => ViewProfileImage(
-                                    imgUrl: widget.cUser.image))),
+                            MaterialPageRoute(builder: (builder) => ViewProfileImage(imgUrl: widget.cUser.image))),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(0),
                           child: Hero(
@@ -103,10 +109,8 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                               height: 240,
                               fit: BoxFit.fill,
                               imageUrl: widget.cUser.image,
-                              placeholder: (context, url) =>
-                                  const CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  const Icon(Icons.person),
+                              placeholder: (context, url) => const CircularProgressIndicator(),
+                              errorWidget: (context, url, error) => const Icon(Icons.person),
                             ),
                           ),
                         ),
@@ -132,9 +136,7 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
                   Text(
                     widget.cUser.isOnline
                         ? "Online"
-                        : DateUtil.getLastActiveTime(
-                            context: context,
-                            lastActive: widget.cUser.lastActive),
+                        : DateUtil.getLastActiveTime(context: context, lastActive: widget.cUser.lastActive),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

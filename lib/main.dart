@@ -4,7 +4,8 @@ import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:flutter_notification_channel/notification_visibility.dart';
 import 'package:provider/provider.dart';
-import 'package:unione/screens/splash_screen.dart';
+// import 'package:unione/screens/splash_screen.dart';
+import 'package:unione/screens/splash_screen_animated.dart';
 import 'utils/theme_state.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Flutter Theme Demo',
             theme: themeState.getTheme(),
-            home: const SplashScreen(),
+            home: const SplashScreenAnimated(),
           );
         },
       ),

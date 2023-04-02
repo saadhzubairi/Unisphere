@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -58,8 +59,21 @@ class _UserScreenState extends State<UserScreen> {
               child: IconWBackground(
                   icon: Icons.dark_mode,
                   onTap: () {
-                    Provider.of<ThemeState>(context, listen: false)
-                        .toggleTheme();
+                    Provider.of<ThemeState>(context, listen: false).toggleTheme();
+                    Future.delayed(Duration(milliseconds: 100)).then(
+                      (value) => SystemChrome.setSystemUIOverlayStyle(
+                        SystemUiOverlayStyle(
+                          statusBarColor: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade200
+                              : Colors.grey.shade900,
+                          systemNavigationBarColor: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : const Color.fromARGB(255, 26, 26, 26),
+                          statusBarIconBrightness:
+                              Theme.of(context).brightness != Brightness.dark ? Brightness.light : Brightness.dark,
+                        ),
+                      ),
+                    );
                   }),
             ),
             const SizedBox(width: 10),
@@ -95,10 +109,8 @@ class _UserScreenState extends State<UserScreen> {
                                 height: 140,
                                 fit: BoxFit.fill,
                                 imageUrl: widget.cUser.image,
-                                placeholder: (context, url) =>
-                                    const CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(Icons.person),
+                                placeholder: (context, url) => const CircularProgressIndicator(),
+                                errorWidget: (context, url, error) => const Icon(Icons.person),
                               ),
                             ),
                       Positioned(
@@ -130,8 +142,7 @@ class _UserScreenState extends State<UserScreen> {
                     hintText: "Eg: Julias Ceaser",
                     prefixIcon: const Icon(Icons.person),
                     onSaved: (val) => APIs.me.name = val ?? '',
-                    validator: (val) =>
-                        val != null && val.isNotEmpty ? null : 'Required Field',
+                    validator: (val) => val != null && val.isNotEmpty ? null : 'Required Field',
                   ),
                   const SizedBox(height: 10),
                   CustomTextField(
@@ -140,8 +151,7 @@ class _UserScreenState extends State<UserScreen> {
                     hintText: "Eg: Feeling Great 🥲",
                     prefixIcon: const Icon(Icons.info),
                     onSaved: (val) => APIs.me.about = val ?? '',
-                    validator: (val) =>
-                        val != null && val.isNotEmpty ? null : 'Required Field',
+                    validator: (val) => val != null && val.isNotEmpty ? null : 'Required Field',
                   ),
                   const SizedBox(height: 40),
                   ElevatedButton.icon(
@@ -150,9 +160,7 @@ class _UserScreenState extends State<UserScreen> {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                         print("inside validator");
-                        APIs.updateUserInfo().then((value) =>
-                            Dialogs.showThemedSnackbar(
-                                context, "Updated User Info"));
+                        APIs.updateUserInfo().then((value) => Dialogs.showThemedSnackbar(context, "Updated User Info"));
                       }
                     },
                     label: const Text("Save"),
@@ -196,8 +204,7 @@ class _UserScreenState extends State<UserScreen> {
                   ElevatedButton.icon(
                     onPressed: () async {
                       final ImagePicker _picker = ImagePicker();
-                      final XFile? image =
-                          await _picker.pickImage(source: ImageSource.gallery);
+                      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
                       if (image != null) {
                         setState(() {
                           _img = image.path;
@@ -205,8 +212,7 @@ class _UserScreenState extends State<UserScreen> {
                         _cropImage().then((value) {
                           APIs.updateProfilePicture(_imgFile!);
                           Navigator.pop(context);
-                          Dialogs.showThemedSnackbar(
-                              context, "Profile Picture Updated");
+                          Dialogs.showThemedSnackbar(context, "Profile Picture Updated");
                         });
                       } else {
                         Dialogs.showSnackbar(context, "Error Occured");
@@ -222,8 +228,7 @@ class _UserScreenState extends State<UserScreen> {
                   ElevatedButton.icon(
                     onPressed: () async {
                       final ImagePicker _picker = ImagePicker();
-                      final XFile? image =
-                          await _picker.pickImage(source: ImageSource.camera);
+                      final XFile? image = await _picker.pickImage(source: ImageSource.camera);
                       if (image != null) {
                         setState(() {
                           _img = image.path;
@@ -231,8 +236,7 @@ class _UserScreenState extends State<UserScreen> {
                         APIs.updateProfilePicture(File(_img!));
                         Navigator.pop(context);
                       }
-                      Dialogs.showThemedSnackbar(
-                          context, "Profile Picture Updated");
+                      Dialogs.showThemedSnackbar(context, "Profile Picture Updated");
                     },
                     icon: Icon(Icons.camera_alt),
                     label: Text("Camera"),
@@ -278,8 +282,7 @@ class _UserScreenState extends State<UserScreen> {
               width: 520,
               height: 520,
             ),
-            viewPort:
-                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+            viewPort: const CroppieViewPort(width: 480, height: 480, type: 'circle'),
             enableExif: true,
             enableZoom: true,
             showZoomer: true,

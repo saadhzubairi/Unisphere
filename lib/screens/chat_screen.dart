@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -31,7 +30,6 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(Duration(milliseconds: 1)).then(
       (value) => SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
-          statusBarBrightness: Theme.of(context).brightness,
           statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
           systemNavigationBarColor: Theme.of(context).colorScheme.shadow,
         ),
@@ -58,17 +56,14 @@ class _ChatScreenState extends State<ChatScreen> {
           flexibleSpace: Padding(
             padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: InkWell(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      ViewProfileScreen(cUser: widget.chatUser))),
+              onTap: () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => ViewProfileScreen(cUser: widget.chatUser))),
               splashColor: Theme.of(context).colorScheme.primary,
               child: StreamBuilder(
                 stream: APIs.getUserInfo(widget.chatUser),
                 builder: (context, snapshot) {
                   final data = snapshot.data?.docs;
-                  final list =
-                      data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
-                          [];
+                  final list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -85,13 +80,9 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: CachedNetworkImage(
                             width: 35,
                             height: 35,
-                            imageUrl: list!.isNotEmpty
-                                ? list[0].image
-                                : widget.chatUser.image,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.person),
+                            imageUrl: list!.isNotEmpty ? list[0].image : widget.chatUser.image,
+                            placeholder: (context, url) => const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => const Icon(Icons.person),
                           ),
                         ),
                       ),
@@ -103,21 +94,15 @@ class _ChatScreenState extends State<ChatScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            list!.isNotEmpty
-                                ? list[0].name
-                                : widget.chatUser.name,
+                            list!.isNotEmpty ? list[0].name : widget.chatUser.name,
                             style: Theme.of(context).textTheme.displaySmall,
                           ),
                           Text(
                             list!.isNotEmpty
                                 ? list[0].isOnline
                                     ? 'Online'
-                                    : DateUtil.getLastActiveTime(
-                                        context: context,
-                                        lastActive: list[0].lastActive)
-                                : DateUtil.getLastActiveTime(
-                                    context: context,
-                                    lastActive: widget.chatUser.lastActive),
+                                    : DateUtil.getLastActiveTime(context: context, lastActive: list[0].lastActive)
+                                : DateUtil.getLastActiveTime(context: context, lastActive: widget.chatUser.lastActive),
                             style: Theme.of(context).textTheme.labelSmall,
                           )
                         ],
@@ -140,11 +125,14 @@ class _ChatScreenState extends State<ChatScreen> {
                   Future.delayed(Duration(milliseconds: 100)).then(
                     (value) => SystemChrome.setSystemUIOverlayStyle(
                       SystemUiOverlayStyle(
-                        statusBarBrightness: Theme.of(context).brightness,
-                        statusBarColor:
-                            Theme.of(context).appBarTheme.backgroundColor,
-                        systemNavigationBarColor:
-                            Theme.of(context).colorScheme.shadow,
+                        statusBarColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey.shade200
+                            : Colors.grey.shade900,
+                        systemNavigationBarColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : const Color.fromARGB(255, 26, 26, 26),
+                        statusBarIconBrightness:
+                            Theme.of(context).brightness != Brightness.dark ? Brightness.light : Brightness.dark,
                       ),
                     ),
                   );
@@ -174,10 +162,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         case ConnectionState.done:
                           final data = snapshot.data?.docs;
                           _list.clear();
-                          _list = data
-                                  ?.map((e) => Message.fromJson(e.data()))
-                                  .toList() ??
-                              [];
+                          _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
                           if (_list.isNotEmpty) {
                             return ListView.builder(
                               reverse: true,
@@ -235,8 +220,7 @@ class _ChatScreenState extends State<ChatScreen> {
             maxLines: 2,
             style: Theme.of(context).textTheme.bodyLarge,
             decoration: InputDecoration(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
               filled: true,
               fillColor: Theme.of(context).colorScheme.tertiary,
               enabledBorder: OutlineInputBorder(
@@ -253,8 +237,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: IconButton(
                   onPressed: () async {
                     final ImagePicker _picker = ImagePicker();
-                    final XFile? image =
-                        await _picker.pickImage(source: ImageSource.gallery);
+                    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
                       setState(() {
                         _img = image.path;
@@ -262,8 +245,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       _cropImage().then((value) {
                         if (_imgFile != null) {
                           isUploading = true;
-                          APIs.sendChatImage(widget.chatUser, _imgFile!)
-                              .then((value) {
+                          APIs.sendChatImage(widget.chatUser, _imgFile!).then((value) {
                             setState(() {
                               isUploading = false;
                             });
@@ -332,8 +314,7 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 520,
               height: 520,
             ),
-            viewPort:
-                const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+            viewPort: const CroppieViewPort(width: 480, height: 480, type: 'circle'),
             enableExif: true,
             enableZoom: true,
             showZoomer: true,

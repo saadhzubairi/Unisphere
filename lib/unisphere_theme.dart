@@ -3,55 +3,31 @@ import 'package:google_fonts/google_fonts.dart';
 
 class UnisphereTheme {
   static TextTheme lightTextTheme = TextTheme(
-    labelLarge: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
-    labelMedium: GoogleFonts.openSans(
-        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
-    labelSmall: GoogleFonts.openSans(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: Colors.grey.shade600,
-        letterSpacing: 0),
-    bodyLarge: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
-    bodyMedium: GoogleFonts.openSans(
-        fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black),
-    bodySmall: GoogleFonts.openSans(
-        fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
-    displayLarge: GoogleFonts.openSans(
-        fontSize: 32, fontWeight: FontWeight.w900, color: Colors.grey.shade700),
-    displayMedium: GoogleFonts.openSans(
-        fontSize: 21, fontWeight: FontWeight.w900, color: Colors.grey.shade700),
-    displaySmall: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w900, color: Colors.grey.shade700),
-    titleLarge: GoogleFonts.openSans(
-        fontSize: 40, fontWeight: FontWeight.w900, color: Colors.black),
+    labelLarge: GoogleFonts.openSans(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
+    labelMedium: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade600),
+    labelSmall:
+        GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey.shade600, letterSpacing: 0),
+    bodyLarge: GoogleFonts.openSans(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
+    bodyMedium: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black),
+    bodySmall: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
+    displayLarge: GoogleFonts.openSans(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.grey.shade700),
+    displayMedium: GoogleFonts.openSans(fontSize: 21, fontWeight: FontWeight.w900, color: Colors.grey.shade700),
+    displaySmall: GoogleFonts.openSans(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.grey.shade700),
+    titleLarge: GoogleFonts.openSans(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.black),
   );
 
   static TextTheme darkTextTheme = TextTheme(
-    labelLarge: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade400),
-    labelMedium: GoogleFonts.openSans(
-        fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade400),
-    labelSmall: GoogleFonts.openSans(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: Colors.grey.shade400,
-        letterSpacing: 0),
-    bodyLarge: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
-    bodyMedium: GoogleFonts.openSans(
-        fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
-    bodySmall: GoogleFonts.openSans(
-        fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
-    displayLarge: GoogleFonts.openSans(
-        fontSize: 32, fontWeight: FontWeight.w900, color: Colors.grey.shade200),
-    displayMedium: GoogleFonts.openSans(
-        fontSize: 21, fontWeight: FontWeight.w900, color: Colors.grey.shade200),
-    displaySmall: GoogleFonts.openSans(
-        fontSize: 16, fontWeight: FontWeight.w900, color: Colors.grey.shade200),
-    titleLarge: GoogleFonts.openSans(
-        fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white),
+    labelLarge: GoogleFonts.openSans(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade400),
+    labelMedium: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade400),
+    labelSmall:
+        GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey.shade400, letterSpacing: 0),
+    bodyLarge: GoogleFonts.openSans(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
+    bodyMedium: GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white),
+    bodySmall: GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white),
+    displayLarge: GoogleFonts.openSans(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.grey.shade200),
+    displayMedium: GoogleFonts.openSans(fontSize: 21, fontWeight: FontWeight.w900, color: Colors.grey.shade200),
+    displaySmall: GoogleFonts.openSans(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.grey.shade200),
+    titleLarge: GoogleFonts.openSans(fontSize: 40, fontWeight: FontWeight.w900, color: Colors.white),
   );
 
   static ThemeData light() {
@@ -100,8 +76,7 @@ class UnisphereTheme {
             titleSpacing: 0.0,
             centerTitle: true,
             elevation: 0.0,
-            titleTextStyle:
-                GoogleFonts.lato(color: Colors.grey.shade200, fontSize: 22)));
+            titleTextStyle: GoogleFonts.lato(color: Colors.grey.shade200, fontSize: 22)));
     return themeData.copyWith(
       colorScheme: themeData.colorScheme.copyWith(
         background: Color.fromARGB(255, 60, 60, 60),
