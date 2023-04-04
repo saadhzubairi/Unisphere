@@ -26,16 +26,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   @override
-  void initState() {
-    Future.delayed(Duration(milliseconds: 1)).then(
-      (value) => SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
-          systemNavigationBarColor: Theme.of(context).colorScheme.shadow,
-        ),
-      ),
-    );
-  }
+  void initState() {}
 
   List<Message> _list = [];
 
@@ -121,21 +112,6 @@ class _ChatScreenState extends State<ChatScreen> {
                 icon: Icons.dark_mode,
                 onTap: () {
                   Provider.of<ThemeState>(context, listen: false).toggleTheme();
-
-                  Future.delayed(Duration(milliseconds: 100)).then(
-                    (value) => SystemChrome.setSystemUIOverlayStyle(
-                      SystemUiOverlayStyle(
-                        statusBarColor: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey.shade200
-                            : Colors.grey.shade900,
-                        systemNavigationBarColor: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : const Color.fromARGB(255, 26, 26, 26),
-                        statusBarIconBrightness:
-                            Theme.of(context).brightness != Brightness.dark ? Brightness.light : Brightness.dark,
-                      ),
-                    ),
-                  );
                 },
               ),
             ),

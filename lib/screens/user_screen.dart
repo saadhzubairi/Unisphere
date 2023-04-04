@@ -60,20 +60,6 @@ class _UserScreenState extends State<UserScreen> {
                   icon: Icons.dark_mode,
                   onTap: () {
                     Provider.of<ThemeState>(context, listen: false).toggleTheme();
-                    Future.delayed(Duration(milliseconds: 100)).then(
-                      (value) => SystemChrome.setSystemUIOverlayStyle(
-                        SystemUiOverlayStyle(
-                          statusBarColor: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.grey.shade200
-                              : Colors.grey.shade900,
-                          systemNavigationBarColor: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : const Color.fromARGB(255, 26, 26, 26),
-                          statusBarIconBrightness:
-                              Theme.of(context).brightness != Brightness.dark ? Brightness.light : Brightness.dark,
-                        ),
-                      ),
-                    );
                   }),
             ),
             const SizedBox(width: 10),
