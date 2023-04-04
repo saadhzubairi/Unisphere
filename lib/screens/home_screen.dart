@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:unione/api/apis.dart';
 import 'package:unione/model/chat_user.dart';
 import 'package:unione/screens/auth/login_screen.dart';
 import 'package:unione/screens/user_screen.dart';
 import 'package:unione/widgets/chat_user_card.dart';
+import '../utils/theme_state.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/icon_w_background.dart';
 
@@ -19,22 +21,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  _signOut() async {
-    APIs.updateActiveStatus(false);
-    await FirebaseAuth.instance.signOut();
-    await GoogleSignIn().signOut().then(
-      (value) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const LoginAuthScreen(),
-          ),
-        );
-        APIs.auth = FirebaseAuth.instance;
-      },
-    );
-  }
-
   List<ChatUser> list = [];
   final List<ChatUser> _searchList = [];
   bool _isSearching = false;
@@ -47,11 +33,11 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(Duration(milliseconds: 1)).then(
       (value) => SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
-            /* statusBarBrightness: Theme.of(context).brightness,
+          statusBarBrightness: Theme.of(context).brightness,
           statusBarColor: Theme.of(context).appBarTheme.backgroundColor,
           systemNavigationBarIconBrightness: Theme.of(context).brightness,
-          systemNavigationBarColor: Theme.of(context).colorScheme.shadow, */
-            ),
+          systemNavigationBarColor: Theme.of(context).colorScheme.shadow,
+        ),
       ),
     );
     SystemChannels.lifecycle.setMessageHandler((message) {
@@ -135,6 +121,26 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: IconWBackground(
+                    icon: Icons.dark_mode,
+                    onTap: () {
+                      Provider.of<ThemeState>(context, listen: false).toggleTheme();
+                      Future.delayed(Duration(milliseconds: 1)).then(
+                        (value) => SystemChrome.setSystemUIOverlayStyle(
+                          SystemUiOverlayStyle(
+                            statusBarColor: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey.shade200
+                                : Colors.grey.shade900,
+                            systemNavigationBarColor:
+                                Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+              const SizedBox(width: 10),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconWBackground(
                     icon: _isSearching ? Icons.clear_rounded : Icons.search,
                     onTap: () {
                       _searchList.clear();
@@ -142,12 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         _isSearching = !_isSearching;
                       });
                     }),
-              ),
-              const SizedBox(width: 10),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconWBackground(
-                    icon: Icons.logout, onTap: () => APIs.updateActiveStatus(false).then((value) => _signOut())),
               ),
               const SizedBox(width: 10),
             ],

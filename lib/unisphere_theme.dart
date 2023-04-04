@@ -45,9 +45,9 @@ class UnisphereTheme {
           onBackground: Colors.black,
           error: Colors.red,
           onError: Colors.white,
-          primary: Colors.blue.shade900,
+          primary: Colors.blue,
           onPrimary: Colors.white,
-          secondary: Colors.yellow.shade800,
+          secondary: Colors.blue,
           onSecondary: Colors.white,
           surface: Colors.grey.shade400,
           onSurface: Colors.white,
@@ -79,9 +79,9 @@ class UnisphereTheme {
             titleTextStyle: GoogleFonts.lato(color: Colors.grey.shade200, fontSize: 22)));
     return themeData.copyWith(
       colorScheme: themeData.colorScheme.copyWith(
-        background: Color.fromARGB(255, 60, 60, 60),
+        background: Color.fromARGB(255, 20, 20, 20),
         onBackground: Color.fromARGB(255, 255, 255, 255),
-        primary: Colors.blueAccent,
+        primary: Colors.deepOrange.shade900,
         secondary: Colors.red,
         error: Colors.red,
         onError: Colors.white,
@@ -91,7 +91,7 @@ class UnisphereTheme {
         onTertiary: Colors.grey.shade300,
         scrim: Colors.grey.shade400,
         outlineVariant: Colors.grey.shade400,
-        shadow: Color.fromARGB(255, 26, 26, 26),
+        shadow: Color.fromARGB(255, 0, 0, 0),
       ),
       appBarTheme: AppBarTheme(
         titleSpacing: 0.0,

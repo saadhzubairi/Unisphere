@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +15,7 @@ import 'package:unione/utils/dialogs.dart';
 import '../utils/theme_state.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/icon_w_background.dart';
+import 'auth/login_screen.dart';
 
 enum AppState {
   free,
@@ -44,9 +47,26 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _signOut() async {
+      APIs.updateActiveStatus(false);
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn().signOut().then(
+        (value) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const LoginAuthScreen(),
+            ),
+          );
+          APIs.auth = FirebaseAuth.instance;
+        },
+      );
+    }
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.shadow,
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(
@@ -57,10 +77,7 @@ class _UserScreenState extends State<UserScreen> {
             Align(
               alignment: Alignment.centerRight,
               child: IconWBackground(
-                  icon: Icons.dark_mode,
-                  onTap: () {
-                    Provider.of<ThemeState>(context, listen: false).toggleTheme();
-                  }),
+                  icon: Icons.logout, onTap: () => APIs.updateActiveStatus(false).then((value) => _signOut())),
             ),
             const SizedBox(width: 10),
           ],

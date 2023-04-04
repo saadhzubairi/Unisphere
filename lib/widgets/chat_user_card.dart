@@ -43,22 +43,18 @@ class _ChatUserCardState extends State<ChatUserCard> {
               builder: (context, snapshot) {
                 final data = snapshot.data?.docs;
 
-                final _list =
-                    data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
+                final _list = data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
 
                 if (_list.isNotEmpty) lMessage = _list[0];
 
                 return ListTile(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(100),
                     child: InkWell(
                       onTap: () {
                         Navigator.of(context).push(PageRouteBuilder(
-                            pageBuilder: (context, _, __) =>
-                                ProfileDialog(user: widget.user),
-                            opaque: false));
+                            pageBuilder: (context, _, __) => ProfileDialog(user: widget.user), opaque: false));
                       },
                       child: Hero(
                         tag: 'pfimage${widget.user.id}',
@@ -66,16 +62,13 @@ class _ChatUserCardState extends State<ChatUserCard> {
                           width: 40,
                           height: 40,
                           imageUrl: widget.user.image,
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.person),
+                          placeholder: (context, url) => const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => const Icon(Icons.person),
                         ),
                       ),
                     ),
                   ),
-                  title: Text(widget.user.name,
-                      style: Theme.of(context).textTheme.bodyLarge),
+                  title: Text(widget.user.name, style: Theme.of(context).textTheme.bodyLarge),
                   subtitle: lMessage != null
                       ? Row(
                           children: [
@@ -94,13 +87,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                     child: Container(
                                       child: Text(
                                           overflow: TextOverflow.ellipsis,
-                                          lMessage != null
-                                              ? lMessage!.msg
-                                              : widget.user.about,
+                                          lMessage != null ? lMessage!.msg : widget.user.about,
                                           maxLines: 1,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium),
+                                          style: Theme.of(context).textTheme.labelMedium),
                                     ),
                                   )
                                 : Row(
@@ -109,10 +98,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                                       SizedBox(
                                         width: 3,
                                       ),
-                                      Text("image",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelMedium)
+                                      Text("image", style: Theme.of(context).textTheme.labelMedium)
                                     ],
                                   )
                           ],
@@ -133,8 +119,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                               color: widget.user.isOnline
                                   ? Color.fromARGB(255, 39, 229, 112)
                                   : lMessage != null
-                                      ? ((lMessage!.fromId != APIs.cUser.uid &&
-                                              lMessage!.read.isEmpty)
+                                      ? ((lMessage!.fromId != APIs.cUser.uid && lMessage!.read.isEmpty)
                                           ? Colors.green.shade300
                                           : Colors.transparent)
                                       : Colors.transparent,
@@ -146,9 +131,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                       const SizedBox(height: 10),
                       Text(
                         lMessage != null
-                            ? DateUtil.getLastMessageTime(
-                                context: context,
-                                time: lMessage!.sent.toString())
+                            ? DateUtil.getLastMessageTime(context: context, time: lMessage!.sent.toString())
                             : "",
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
