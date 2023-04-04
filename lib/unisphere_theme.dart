@@ -63,7 +63,6 @@ class UnisphereTheme {
         color: Colors.grey.shade200,
         titleTextStyle: GoogleFonts.lato(color: Colors.black, fontSize: 22),
       ),
-      splashColor: Colors.blue.shade900,
     );
   }
 
@@ -100,7 +99,6 @@ class UnisphereTheme {
         color: Colors.grey.shade900,
         titleTextStyle: themeData.textTheme.displayMedium,
       ),
-      splashColor: Colors.blue.shade900,
     );
   }
 }
