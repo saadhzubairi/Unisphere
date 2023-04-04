@@ -8,6 +8,7 @@ import 'package:unione/model/chat_user.dart';
 import 'package:unione/screens/auth/login_screen.dart';
 import 'package:unione/screens/user_screen.dart';
 import 'package:unione/widgets/chat_user_card.dart';
+import '../widgets/custom_text_field.dart';
 import '../widgets/icon_w_background.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -154,30 +155,146 @@ class _HomeScreenState extends State<HomeScreen> {
           body: Padding(
             padding: const EdgeInsets.only(top: 10),
             child: StreamBuilder(
-              stream: APIs.getAllUsers(),
-              builder: (context, snapshot) {
-                ///asdasdasd
-                list.clear();
-                if (snapshot.hasData) {
-                  final data = snapshot.data?.docs;
-                  for (var i in data!) {
-                    list.add(ChatUser.fromJson(i.data()));
-                  }
-                }
+                stream: APIs.getMyFriends(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.docs.map((e) => e.id).toList().length > 1) {
+                      return StreamBuilder(
+                        stream: APIs.getAllUsers(snapshot.data!.docs.map((e) => e.id).toList() ?? []),
+                        builder: (context, snapshot) {
+                          list.clear();
+                          if (snapshot.hasData) {
+                            final data = snapshot.data?.docs;
+                            for (var i in data!) {
+                              list.add(ChatUser.fromJson(i.data()));
+                            }
+                          }
 
-                return ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: _isSearching ? _searchList.length : list.length,
-                  itemBuilder: (context, i) {
-                    return ChatUserCard(
-                      user: _isSearching ? _searchList[i] : list[i],
-                    );
-                  },
-                );
-              },
-            ),
+                          return ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: _isSearching ? _searchList.length : list.length,
+                            itemBuilder: (context, i) {
+                              return ChatUserCard(
+                                user: _isSearching ? _searchList[i] : list[i],
+                              );
+                            },
+                          );
+                        },
+                      );
+                    } else {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.person_add,
+                            color: Theme.of(context).textTheme.displayMedium?.color,
+                            size: MediaQuery.of(context).size.width * .15,
+                          ),
+                          Center(
+                            child: Text(
+                              "Add New Friends!",
+                              style: Theme.of(context).textTheme.displayMedium,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  } else {
+                    return Center(child: const CircularProgressIndicator());
+                  }
+                }),
           ),
-          floatingActionButton: FloatingActionButton(onPressed: () {}, child: const Icon(Icons.textsms)),
+          floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                _showSearchUserDialoge();
+              },
+              child: const Icon(Icons.textsms)),
+        ),
+      ),
+    );
+  }
+
+  void _showSearchUserDialoge() {
+    String email = "";
+    showDialog(
+      context: context,
+      builder: (builder) => AlertDialog(
+        actionsPadding: EdgeInsets.zero,
+        contentPadding: EdgeInsets.all(100),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+        backgroundColor: Theme.of(context).colorScheme.shadow,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.person_add,
+                    size: 35,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade500
+                        : Theme.of(context).colorScheme.primary,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "Add Friend",
+                    style: Theme.of(context).textTheme.displaySmall,
+                  )
+                ],
+              ),
+            ),
+            CustomTextField(
+              onChanged: (value) => email = value,
+              prompText: "Email",
+              hintText: "Enter email address",
+              prefixIcon: const Icon(Icons.email_outlined),
+              validator: (val) => val != null && val.isNotEmpty ? null : 'Required Field',
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 12, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: Color.fromARGB(255, 183, 48, 38)),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          return Theme.of(context).colorScheme.error.withOpacity(0.1);
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      APIs.addFriend(email);
+                    },
+                    child: Text("Add"),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          return Theme.of(context).colorScheme.primary.withOpacity(0.1);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

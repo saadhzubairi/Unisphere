@@ -6,6 +6,8 @@ class CustomTextField extends StatefulWidget {
   String? initialValue;
   String? hintText;
   Icon? prefixIcon;
+  int? maxLines;
+
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final Function(String)? onChanged;
@@ -44,6 +46,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         validator: widget.validator,
         enableSuggestions: false,
         autocorrect: false,
+        maxLines: widget.maxLines,
         onSaved: widget.onSaved,
         initialValue: widget.initialValue ?? '',
         style: Theme.of(context).textTheme.bodyMedium,
@@ -52,8 +55,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             labelText: widget.prompText ?? '',
             prefixIcon: widget.prefixIcon,
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  width: 3, color: Theme.of(context).colorScheme.surface),
+              borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.surface),
               borderRadius: BorderRadius.circular(25),
             ),
             errorBorder: OutlineInputBorder(
@@ -61,13 +63,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.circular(15),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  width: 3, color: Theme.of(context).colorScheme.error),
+              borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.error),
               borderRadius: BorderRadius.circular(15),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  width: 3, color: Theme.of(context).colorScheme.primary),
+              borderSide: BorderSide(width: 3, color: Theme.of(context).colorScheme.primary),
               borderRadius: BorderRadius.circular(15),
             )),
       ),

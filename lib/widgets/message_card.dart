@@ -13,6 +13,8 @@ import 'package:unione/screens/view_chat_image.dart';
 import 'package:unione/utils/date_time_util.dart';
 import 'package:unione/utils/dialogs.dart';
 
+import 'custom_text_field.dart';
+
 class MessageCard extends StatefulWidget {
   final Message message;
   final String name;
@@ -239,7 +241,14 @@ class _MessageCardState extends State<MessageCard> {
                         width: 15,
                       ),
                     if (APIs.cUser.uid == widget.message.fromId)
-                      IconButton(onPressed: () {}, icon: const Icon(Icons.edit), tooltip: "Edit text"),
+                      IconButton(
+                          onPressed: () {
+                            log("pressed edit");
+                            Navigator.pop(context);
+                            _showMessageUpdateDialoge();
+                          },
+                          icon: const Icon(Icons.edit),
+                          tooltip: "Edit text"),
                     if (APIs.cUser.uid == widget.message.fromId)
                       const SizedBox(
                         width: 15,
@@ -317,6 +326,35 @@ class _MessageCardState extends State<MessageCard> {
           ),
         );
       },
+    );
+  }
+
+  void _showMessageUpdateDialoge() {
+    String updatedMsg = widget.message.msg;
+    showDialog(
+      context: context,
+      builder: (builder) => AlertDialog(
+        contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
+        backgroundColor: Theme.of(context).colorScheme.shadow,
+        title: CustomTextField(
+          onChanged: (value) => updatedMsg = value,
+          prompText: "Message",
+          initialValue: widget.message.msg,
+          hintText: "Enter edited message",
+          prefixIcon: const Icon(Icons.message),
+          validator: (val) => val != null && val.isNotEmpty ? null : 'Required Field',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              APIs.updateMessageText(widget.message, updatedMsg);
+              Navigator.of(context).pop();
+            },
+            child: const Text("Save"),
+          )
+        ],
+      ),
     );
   }
 }

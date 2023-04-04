@@ -20,19 +20,16 @@ class APIs {
 
   //for storing self info:
   static late ChatUser me = ChatUser(
-      image: "image",
-      name: "name",
-      about: "about",
-      createdAt: "createdAt",
-      id: "id",
-      lastActive: "lastActive",
-      isOnline: false,
-      pushToken: "pushToken",
-      email: "email");
-
-  static Future<bool> userExists() async {
-    return (await firestore.collection('users').doc(cUser.uid).get()).exists;
-  }
+    image: "image",
+    name: "name",
+    about: "about",
+    createdAt: "createdAt",
+    id: "id",
+    lastActive: "lastActive",
+    isOnline: false,
+    pushToken: "pushToken",
+    email: "email",
+  );
 
   static Future<void> getSelfInfo() async {
     await firestore.collection('users').doc(cUser.uid).get().then((user) async {
@@ -45,24 +42,30 @@ class APIs {
     });
   }
 
+  static Future<bool> userExists() async {
+    return (await firestore.collection('users').doc(cUser.uid).get()).exists;
+  }
+
   static Future<void> createUser() async {
     final time = DateTime.now().microsecondsSinceEpoch.toString();
     final chatUser = ChatUser(
-        image: cUser.photoURL.toString(),
-        name: cUser.displayName.toString(),
-        about: "Hey!",
-        createdAt: time,
-        id: cUser.uid,
-        lastActive: time,
-        isOnline: false,
-        pushToken: "pushToken",
-        email: cUser.email.toString());
-
+      image: cUser.photoURL.toString(),
+      name: cUser.displayName.toString(),
+      about: "Hey!",
+      createdAt: time,
+      id: cUser.uid,
+      lastActive: time,
+      isOnline: false,
+      pushToken: "pushToken",
+      email: cUser.email.toString(),
+    );
+    firestore.collection('users').doc(cUser.uid).collection('my_friends').doc("-").set({});
+    log("user was created!");
     return await firestore.collection('users').doc(cUser.uid).set(chatUser.toJson());
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
-    return firestore.collection('users').where("id", isNotEqualTo: cUser.uid).snapshots();
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(List<String> userIds) {
+    return firestore.collection('users').where("id", whereIn: userIds).snapshots();
   }
 
   static Future<void> updateUserInfo() async {
@@ -199,8 +202,28 @@ class APIs {
 
   static Future<void> updateMessageText(Message message, String updatedMsg) async {
     firestore
-        .collection('chats/${getConversationID(message.fromId)}/messages/')
+        .collection('chats/${getConversationID(message.toId)}/messages/')
         .doc(message.sent)
         .update({'msg': updatedMsg});
+  }
+
+  /* ADDING FRIENDS LOGIC */
+  static Future<bool> addFriend(String email) async {
+    if (email != cUser.email) {
+      final data = await firestore.collection('users').where('email', isEqualTo: email).get();
+      if (data.docs.isEmpty) {
+        return false;
+      } else {
+        firestore.collection('users').doc(me.id).collection('my_friends').doc(data.docs.first.id).set({});
+        firestore.collection('users').doc(data.docs.first.id).collection('my_friends').doc(me.id).set({});
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyFriends() {
+    return firestore.collection('users').doc(cUser.uid).collection('my_friends').snapshots();
   }
 }
