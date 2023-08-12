@@ -1,16 +1,9 @@
-# unione
+# Unisphere
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+A simple and intuitive chatting application with push notifications.
+![1](https://github.com/saadhzubairi/Unisphere/assets/69084203/ebd61ed1-fcf8-4019-b2f7-bdd87ca8ae59)
+![5](https://github.com/saadhzubairi/Unisphere/assets/69084203/3e17a12d-e244-4636-bc65-28a043a04c87)
+![6](https://github.com/saadhzubairi/Unisphere/assets/69084203/0fc38dd7-7962-42f1-8db5-ad098c857d16)
+![3](https://github.com/saadhzubairi/Unisphere/assets/69084203/d2e7cc4c-069c-4375-8f53-323d04788ed5)
+![4](https://github.com/saadhzubairi/Unisphere/assets/69084203/555b2c56-05ac-4454-a213-437b720eaf8c)
+![7](https://github.com/saadhzubairi/Unisphere/assets/69084203/a60dffc4-0e90-4982-b6bf-ba520619e69e)
